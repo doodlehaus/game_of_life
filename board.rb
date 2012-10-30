@@ -1,6 +1,7 @@
 class Board
 
   attr_accessor :cells
+  attr_reader :grid
   def initialize(grid=5)
     @cells = []
     @fate = []
@@ -8,28 +9,29 @@ class Board
   end
 
   def tick!
+    # check live cells
     cells.each do |cell|
-      # Any live cell with fewer than two live neighbours dies, as if caused by under-population.
-      if cell.neighbors.count < 2
-        @cells -= [cell]
-      end
-
-      if cell.neighbors.count > 3
-        @cells -= [cell]
+      if cell.neighbors.count == 3 || cell.neighbors.count == 2
+        @fate << cell
       end
     end
 
+
+    # check empty grid spaces
     (0..@grid-1).each do |x|
       (0..@grid-1).each do |y|
         unless cell_at?(x,y)
           empty_cell = Cell.new(self, x, y)
-          puts "empty_cell at #{x}, #{y} has #{empty_cell.neighbors.count} neighbors"
-          unless empty_cell.neighbors.count == 3
-            self.cells -= [empty_cell]
+          if empty_cell.neighbors.count == 3
+            @fate << empty_cell
           end
+          self.cells -= [empty_cell]
         end
       end
     end
+
+    @cells = @fate
+    @fate = []
 
   end
 

@@ -1,5 +1,6 @@
 require_relative './cell'
 require_relative './board'
+require_relative './renderer'
 
 describe "Conway's Game of Life:" do
 
@@ -178,6 +179,24 @@ describe "Conway's Game of Life:" do
         @board.cell_at?(1,0).should be_false
       end
     end
+  end
+
+  describe "rendering engine" do
+    before do
+      @board = Board.new(9)
+    end
+
+    it "renders '-' for empty cells" do
+      renderer = Renderer.new(@board)
+      renderer.render.should == "---------\n---------\n---------\n---------\n---------\n---------\n---------\n---------\n---------\n"
+    end
+
+    it "renders '0' for live cells" do
+      Cell.new(@board, 0, 0)
+      renderer = Renderer.new(@board)
+      renderer.render.should == "0--------\n---------\n---------\n---------\n---------\n---------\n---------\n---------\n---------\n"
+    end
+    
   end
 
 end
